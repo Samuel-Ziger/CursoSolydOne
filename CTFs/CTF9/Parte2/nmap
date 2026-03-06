@@ -1,0 +1,13 @@
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-02-28 00:08 +0000
+Stats: 0:00:05 elapsed; 0 hosts completed (1 up), 1 undergoing SYN Stealth Scan
+SYN Stealth Scan Timing: About 33.52% done; ETC: 00:09 (0:00:10 remaining)
+Stats: 0:00:05 elapsed; 0 hosts completed (1 up), 1 undergoing SYN Stealth Scan
+SYN Stealth Scan Timing: About 33.80% done; ETC: 00:09 (0:00:10 remaining)
+Nmap scan report for ec2-3-238-66-177.compute-1.amazonaws.com (3.238.66.177)
+Host is up (0.14s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE    SERVICE
+25/tcp filtered smtp
+80/tcp open     http
+
+Nmap done: 1 IP address (1 host up) scanned in 15.54 seconds

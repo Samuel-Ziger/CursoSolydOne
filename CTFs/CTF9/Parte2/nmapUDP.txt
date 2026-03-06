@@ -1,0 +1,35 @@
+┌──(client01㉿cliente01)-[~/Área de trabalho/todos os ctfs/CTF9/Parte2]
+└─$ nmap -sU -p- 3.236.197.144 --top-ports 200
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-01 01:49 +0000
+Nmap scan report for projects-blogo.sy (3.236.197.144)
+Host is up (0.14s latency).
+Not shown: 195 closed udp ports (port-unreach)
+PORT     STATE         SERVICE
+68/udp   open|filtered dhcpc
+137/udp  open|filtered netbios-ns
+138/udp  open|filtered netbios-dgm
+139/udp  open|filtered netbios-ssn
+5060/udp open|filtered sip
+
+Nmap done: 1 IP address (1 host up) scanned in 214.83 seconds
+┌──(client01㉿cliente01)-[~/Área de trabalho/todos os ctfs/CTF9/Parte2]
+└─$ nmap -p 139,445 --script smb-protocols 3.236.197.144
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-01 01:55 +0000
+Nmap scan report for projects-blogo.sy (3.236.197.144)
+Host is up (0.14s latency).
+
+PORT    STATE  SERVICE
+139/tcp closed netbios-ssn
+445/tcp closed microsoft-ds
+
+Nmap done: 1 IP address (1 host up) scanned in 2.17 seconds
+                                                                           ┌──(client01㉿cliente01)-[~/Área de trabalho/todos os ctfs/CTF9/Parte2]
+└─$ nmap -sU -p 5060 --script sip-methods 3.236.197.144
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-01 01:56 +0000
+Nmap scan report for projects-blogo.sy (3.236.197.144)
+Host is up (0.14s latency).
+
+PORT     STATE         SERVICE
+5060/udp open|filtered sip
+
+Nmap done: 1 IP address (1 host up) scanned in 6.80 seconds
