@@ -1,0 +1,122 @@
+                                                                                                                                                                      
+┌──(kali㉿kali)-[~/…/SetupRedTeam/pentest/ai-security/hexstrike-ai]
+└─$ nmap 3.228.11.37                 
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-07 08:05 -0500
+Nmap scan report for ec2-3-228-11-37.compute-1.amazonaws.com (3.228.11.37)
+Host is up (0.14s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE    SERVICE
+22/tcp open     ssh
+25/tcp filtered smtp
+
+Nmap done: 1 IP address (1 host up) scanned in 3.90 seconds
+                                                                                                                                                                      
+┌──(kali㉿kali)-[~/…/SetupRedTeam/pentest/ai-security/hexstrike-ai]
+└─$ nmap 3.228.11.37 -p 22 -A
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-07 08:05 -0500
+Nmap scan report for ec2-3-228-11-37.compute-1.amazonaws.com (3.228.11.37)
+Host is up (0.13s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.14 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 38:47:3a:f1:3d:48:76:60:22:83:8e:58:c1:4e:6c:06 (ECDSA)
+|_  256 2d:30:e6:d0:e3:14:3f:12:c5:06:bf:a2:25:ba:0d:2c (ED25519)
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: general purpose
+Running: Linux 4.X
+OS CPE: cpe:/o:linux:linux_kernel:4.15
+OS details: Linux 4.15
+Network Distance: 17 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 443/tcp)
+HOP RTT       ADDRESS
+1   1.25 ms   192.168.1.1
+2   3.17 ms   186-230-207-4.ded.intelignet.com.br (186.230.207.4)
+3   18.57 ms  10.230.82.18
+4   21.55 ms  10.230.1.159
+5   55.89 ms  10.224.150.189
+6   19.29 ms  10.239.253.33
+7   43.78 ms  10.223.255.114
+8   19.58 ms  10.213.247.26
+9   ... 16
+17  130.32 ms ec2-3-228-11-37.compute-1.amazonaws.com (3.228.11.37)
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.89 seconds
+                                                                                                                                                                      
+┌──(kali㉿kali)-[~/…/SetupRedTeam/pentest/ai-security/hexstrike-ai]
+└─$ nmap -p22 --script ssh2-enum-algos,ssh-hostkey,ssh-auth-methods 3.228.11.37                  
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-07 08:08 -0500
+Nmap scan report for ec2-3-228-11-37.compute-1.amazonaws.com (3.228.11.37)
+Host is up (0.13s latency).
+
+PORT   STATE SERVICE
+22/tcp open  ssh
+| ssh2-enum-algos: 
+|   kex_algorithms: (12)
+|       sntrup761x25519-sha512@openssh.com
+|       curve25519-sha256
+|       curve25519-sha256@libssh.org
+|       ecdh-sha2-nistp256
+|       ecdh-sha2-nistp384
+|       ecdh-sha2-nistp521
+|       diffie-hellman-group-exchange-sha256
+|       diffie-hellman-group16-sha512
+|       diffie-hellman-group18-sha512
+|       diffie-hellman-group14-sha256
+|       ext-info-s
+|       kex-strict-s-v00@openssh.com
+|   server_host_key_algorithms: (4)
+|       rsa-sha2-512
+|       rsa-sha2-256
+|       ecdsa-sha2-nistp256
+|       ssh-ed25519
+|   encryption_algorithms: (6)
+|       chacha20-poly1305@openssh.com
+|       aes128-ctr
+|       aes192-ctr
+|       aes256-ctr
+|       aes128-gcm@openssh.com
+|       aes256-gcm@openssh.com
+|   mac_algorithms: (10)
+|       umac-64-etm@openssh.com
+|       umac-128-etm@openssh.com
+|       hmac-sha2-256-etm@openssh.com
+|       hmac-sha2-512-etm@openssh.com
+|       hmac-sha1-etm@openssh.com
+|       umac-64@openssh.com
+|       umac-128@openssh.com
+|       hmac-sha2-256
+|       hmac-sha2-512
+|       hmac-sha1
+|   compression_algorithms: (2)
+|       none
+|_      zlib@openssh.com
+| ssh-hostkey: 
+|   256 38:47:3a:f1:3d:48:76:60:22:83:8e:58:c1:4e:6c:06 (ECDSA)
+|_  256 2d:30:e6:d0:e3:14:3f:12:c5:06:bf:a2:25:ba:0d:2c (ED25519)
+| ssh-auth-methods: 
+|   Supported authentication methods: 
+|     publickey
+|_    password
+
+Nmap done: 1 IP address (1 host up) scanned in 4.90 seconds
+                                                                                                                                                                      
+┌──(kali㉿kali)-[~/…/SetupRedTeam/pentest/ai-security/hexstrike-ai]
+└─$ nc 3.228.11.37 22                                                          
+SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+^C
+                                                                                                                                                                      
+┌──(kali㉿kali)-[~/…/SetupRedTeam/pentest/ai-security/hexstrike-ai]
+└─$ ssh 3.228.11.37
+kali@3.228.11.37's password: 
+
+PORT   STATE SERVICE
+22/tcp open  ssh
+| ssh-brute: 
+|   Accounts: No valid accounts found
+|_  Statistics: Performed 2910 guesses in 903 seconds, average tps: 3.2
+
+Nmap done: 1 IP address (1 host up) scanned in 903.05 seconds

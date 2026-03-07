@@ -12,9 +12,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Valores padrão (configuração atual)
-DEFAULT_TARGET_IP="98.92.182.73"
+DEFAULT_TARGET_IP="44.197.173.254"
 DEFAULT_NGROK_HOST="0.tcp.sa.ngrok.io"
-DEFAULT_NGROK_PORT="16971"
+DEFAULT_NGROK_PORT="16147"
 
 # Usar argumentos se fornecidos, senão usar valores padrão
 if [ $# -ge 3 ]; then
