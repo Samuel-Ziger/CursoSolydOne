@@ -2,7 +2,7 @@
 
 ## Informações Gerais
 
-**Data de Execução:** 14 de fevereiro de 2026  
+**Data de Execução:** 6 de março de 2026 (última atualização)  
 **Alvo Principal:** 98.86.169.119 (ec2-98-86-169-119.compute-1.amazonaws.com)  
 **Banco de Dados MySQL:** 13.220.129.145 (ec2-13-220-129-145.compute-1.amazonaws.com)  
 **Total de Flags:** 3 flags encontradas de 4 
@@ -153,6 +153,9 @@ cat /flag.txt
 │   └── config.php (contém credenciais do banco de dados)
 ├── festas-ano-novo.png
 ├── files/
+│   ├── settings.json (pertencente a www-data, legível)
+│   ├── test.php (pertencente a mysql, rw-r-----)
+│   └── test.txt (pertencente a mysql, rw-r-----)
 ├── index.html
 ├── noticias.php
 ├── rev.php (criado durante exploração)
@@ -161,11 +164,28 @@ cat /flag.txt
 └── test.txt (pertencente ao usuário mysql)
 ```
 
+**Observações sobre /var/www/blogo/files/:**
+- Diretório com permissões `drwxrwxrwx` (777) - totalmente gravável
+- Arquivo `settings.json` contém configurações (possivelmente credenciais)
+- Arquivos `test.php` e `test.txt` pertencem ao usuário `mysql` com permissões restritivas
+- O diretório está configurado com `Require local` no Apache (acesso apenas local)
+
 **Informações do Sistema:**
-- **Sistema Operacional:** Linux ip-10-0-3-227 6.8.0-1021-aws #23-Ubuntu SMP Mon Dec 9 23:59:34 UTC 2024 x86_64
+- **Sistema Operacional:** Linux ip-10-0-208-92 6.8.0-1021-aws #23-Ubuntu SMP Mon Dec 9 23:59:34 UTC 2024 x86_64
 - **Ambiente:** Container Docker (evidência: arquivo `.dockerenv` na raiz)
 - **Usuário Inicial:** www-data (uid=33, gid=33)
 - **Grupos do www-data:** www-data (33), mysql (101)
+
+**Informações de Rede:**
+- **IP Principal:** 10.0.208.92 (interface ens5)
+- **IP Docker:** 172.17.0.1 (interface docker0)
+- **Gateway:** 10.0.0.1 (MAC: 02:0c:29:59:ff:8f)
+- **DNS:** 127.0.0.53
+- **Domínio de Busca:** ec2.internal
+- **Interfaces de Rede:**
+  - `lo` (loopback)
+  - `ens5` (principal)
+  - `docker0` (bridge Docker)
 
 **Enumeração de Segurança do Sistema:**
 
@@ -330,7 +350,7 @@ sudo -l
 
 Resultado:
 ```
-User adalberto may run the following commands on ip-10-0-3-227:
+User adalberto may run the following commands on ip-10-0-208-92:
     (ALL : ALL) NOPASSWD: /usr/local/bin/below *, !/usr/local/bin/below --config*, !/usr/local/bin/below --debug*, !/usr/local/bin/below -d*
 ```
 
@@ -532,10 +552,15 @@ Senha: WPcmqw16ZmzO!5paSC4
 
 ### 5.3 Informações de Sistema
 ```
-Hostname: ip-10-0-3-227 (varia entre sessões)
+Hostname: ip-10-0-208-92 (varia entre sessões)
 Sistema Operacional: Ubuntu (kernel 6.8.0-1021-aws)
 Ambiente: Container Docker
 Arquitetura: x86_64
+IP Principal: 10.0.208.92 (interface ens5)
+IP Docker: 172.17.0.1 (interface docker0)
+Gateway: 10.0.0.1
+DNS: 127.0.0.53
+Domínio de Busca: ec2.internal
 ```
 
 ---
@@ -680,5 +705,69 @@ A exploração bem-sucedida de 3 flags demonstra a eficácia de uma abordagem si
 ---
 
 **Relatório Gerado em:** 14 de fevereiro de 2026  
+**Última Atualização:** 6 de março de 2026  
 **Autor:** Análise de CTF9  
-**Versão:** 1.0
+**Versão:** 1.1
+
+---
+
+## 11. Atualizações Recentes (6 de março de 2026)
+
+### 11.1 Informações de Sistema Atualizadas
+
+**Hostname:** ip-10-0-208-92 (anteriormente ip-10-0-3-227)  
+**IP Principal:** 10.0.208.92 (anteriormente 10.0.3.227)  
+**Gateway:** 10.0.0.1 (MAC: 02:0c:29:59:ff:8f)
+
+### 11.2 Informações de Rede Detalhadas
+
+**Interfaces de Rede:**
+- `lo` (loopback) - 127.0.0.1
+- `ens5` (principal) - 10.0.208.92
+- `docker0` (bridge Docker) - 172.17.0.1
+
+**Configuração DNS:**
+- Nameserver: 127.0.0.53
+- Domínio de busca: ec2.internal
+- Opções: edns0 trust-ad
+
+**Roteamento:**
+- Gateway padrão: 10.0.0.1 via ens5
+- Rede Docker: 172.17.0.0/16
+
+### 11.3 Arquivos do Diretório /var/www/blogo/files/
+
+**Permissões e Propriedades:**
+- Diretório: `drwxrwxrwx` (777) - totalmente gravável
+- `settings.json`: `-rw-r--r--` (644) - pertencente a www-data
+- `test.php`: `-rw-r-----` (640) - pertencente a mysql
+- `test.txt`: `-rw-r-----` (640) - pertencente a mysql
+
+**Observação:** O diretório `/var/www/blogo/files` está configurado com `Require local` no Apache, permitindo acesso apenas de conexões locais.
+
+### 11.4 Processos em Execução
+
+**Principais Processos Identificados:**
+- Apache2 (PID 26): executando como root
+- Múltiplos workers Apache: executando como www-data
+- MySQL (PID 624): executando como mysql
+- Várias shells reversas estabelecidas via ngrok (0.tcp.sa.ngrok.io:16971)
+
+**Observação:** Foram identificadas múltiplas conexões de shell reversa estabelecidas durante a exploração, indicando atividade de teste de penetração em andamento.
+
+### 11.5 Arquivo /etc/hosts
+
+**Conteúdo Atual:**
+```
+127.0.0.1 localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+```
+
+**Observação:** Durante a exploração, foi identificada uma tentativa de edição do arquivo `/etc/hosts` usando o editor `nano`, mas o arquivo estava sem permissão de escrita (unwritable). Isso indica que o usuário `adalberto` tentou modificar o arquivo de hosts, possivelmente para fins de pivoting ou redirecionamento de tráfego.
