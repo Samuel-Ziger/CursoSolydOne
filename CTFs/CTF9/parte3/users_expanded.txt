@@ -1,0 +1,6 @@
+lb-test
+ubuntu
+ec2-user
+admin
+root
+lightbringers
