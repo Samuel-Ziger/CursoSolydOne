@@ -254,3 +254,271 @@ Listando os arquivos:
 ls -la
 Flag 4
 Solyd{0wn3d_th3_bug_b0unty_pr0gr4m}
+
+CTF 2019 – Solyd
+Desafio 2: Cracker ou Hacker
+Flag 1 – FTP Anônimo
+
+A exploração iniciou com um scan de portas usando Nmap, onde foi identificada a porta 21 (FTP) aberta.
+
+Tentamos autenticação com o usuário:
+
+anonymous
+
+Sem senha.
+
+Após o login, foi ativado o modo passivo usando:
+
+pass
+
+Depois foi feita a listagem de arquivos:
+
+ls -la
+
+Resultado:
+
+-rw-rw-r--    1 0        0              32 Dec 16  2018 flag.txt
+-rw-rw-r--    1 0        0             227 Dec 16  2018 readme.txt
+
+Download dos arquivos:
+
+get readme.txt
+get flag.txt
+
+Depois disso, foi feita a leitura da flag:
+
+cat flag.txt
+
+Resultado:
+
+Flag1: Solyd{p4ss1v3_4n0nym0us}
+Flag 2 – Programação com Sockets
+
+Ao abrir o arquivo readme.txt, encontramos a seguinte mensagem:
+
+Seu próximo desafio irá requerir conhecimento de programação em sockets.
+Você irá receber uma matriz 3x3 com caracteres aleatórios e números.
+Some todos os números dessa matriz para conseguir a flag.
+
+A dica da plataforma dizia:
+
+“Lembre-se de bater em todas as portas.”
+
+Então foi realizado um scan em portas altas:
+
+nmap 3.222.207.113 -p 50000-51000
+
+Resultado:
+
+PORT      STATE SERVICE
+50123/tcp open  unknown
+
+Conectando na porta com netcat:
+
+nc 3.222.207.113 50123
+
+Resposta recebida:
+
+SzZ1709qs2289938q
+Q6651G}.w6209+;wJ9380W+fxS
+Iu$25715835BoBuCy|]*{6007(.qpq
+
+A resposta continha números misturados com caracteres, representando a matriz.
+
+Para resolver automaticamente foi criado um script em Python.
+
+Script em Python
+import socket
+import re
+
+ip = "3.222.207.113"
+port = 50123
+soma = 0
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, port))
+
+data = s.recv(1024).decode()
+
+numberlist = re.findall(r"\d+", data)
+
+print(numberlist)
+
+for numero in numberlist:
+    soma += int(numero)
+
+s.send(str(soma).encode())
+
+print(s.recv(1024).decode())
+
+Executando o script:
+
+python3 matriz.py
+
+Resultado:
+
+['6491', '6330', '4724', '2825', '4592', '1572', '236', '1445', '1615']
+
+Flag: Solyd{m4tr1x_s0ck3t}
+Flag 3 – Esteganografia e Forense
+
+Voltando ao FTP, foi encontrada a pasta:
+
+logs
+
+Dentro dela havia o arquivo:
+
+dados.log
+
+Para identificar o tipo do arquivo foi usado:
+
+file dados.log
+
+Resultado:
+
+dados.log: JPEG image data
+
+Ou seja, o arquivo era na verdade uma imagem JPEG.
+
+Foi criada uma cópia renomeando o arquivo:
+
+cp dados.log dados.jpg
+
+Após isso foi executado:
+
+strings dados.log
+
+Entre os resultados foi possível identificar o seguinte trecho:
+
+WAVEfmt
+
+Esse trecho indica o header de um arquivo WAV, ou seja, havia um áudio escondido dentro da imagem.
+
+Extração do áudio
+
+Foi utilizado um editor hexadecimal (Bless).
+
+Passos:
+
+Abrir o arquivo dados.jpg
+
+Procurar pelo final do JPEG:
+
+FF D9
+
+Após esse ponto começa o arquivo de áudio
+
+O conteúdo após esse header foi extraído e salvo como:
+
+som.wav
+Análise do áudio
+
+O áudio foi aberto em um software de edição de som e analisado com espectrograma.
+
+Ao aplicar zoom no espectro foi encontrado o texto:
+
+solyd.forense
+
+Esse texto era uma senha para esteganografia na imagem.
+
+Extração com Steghide
+
+Foi executado:
+
+steghide extract -sf dados.jpg -p solyd.forense
+
+Isso revelou um arquivo:
+
+license.zip
+
+Extraindo o ZIP:
+
+unzip license.zip
+
+Dentro dele estava a terceira flag:
+
+Solyd{m4g1c_numb3rs_4nd_sp3ctr0gr4m}
+Flag 4 – Engenharia Reversa
+
+Dentro do ZIP também foi encontrado um arquivo binário:
+
+license.bin
+
+Primeiro foi executado:
+
+strings license.bin
+
+Mas não foi possível encontrar a flag diretamente.
+
+Então foi utilizado:
+
+ltrace ./license.bin
+
+Resultado:
+
+Usage: <user> <key>
+
+Ou seja, o binário espera dois parâmetros:
+
+<user> <key>
+Engenharia reversa
+
+Foi utilizada análise com:
+
+GDB
+
+plugin PEDA
+
+Durante a análise do assembly foi identificado um jump condicional responsável por validar a chave.
+
+Comando para analisar o binário:
+
+objdump -d -M intel license.bin
+
+Foi encontrado um salto condicional:
+
+75
+
+Esse opcode representa:
+
+JNE (Jump if Not Equal)
+
+Alterando para:
+
+74
+
+Ele se torna:
+
+JE (Jump if Equal)
+
+Ou seja, forçamos a condição a sempre ser válida.
+
+Patch do binário
+
+Utilizando o editor hexadecimal Bless:
+
+Abrir license.bin
+
+Ir até o endereço do opcode
+
+Alterar:
+
+75 → 74
+
+Salvar o binário modificado.
+
+Recuperação da flag
+
+Executando novamente com ltrace:
+
+ltrace ./license.bin user key
+
+Foi possível observar a flag nas chamadas internas:
+
+Solyd{3ng3n33r1ng_r3v3rs3d}
+
+Observação: também seria possível recuperar a flag usando:
+
+strings -n 1 license.bin
+
+E reconstruindo manualmente os caracteres.
