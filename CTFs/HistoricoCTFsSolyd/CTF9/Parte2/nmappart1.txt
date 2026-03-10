@@ -1,0 +1,27 @@
+um scan dentro da parte q pra endeter o que esta rodando localmente
+root@ip-10-0-2-10:/# nmap -sS -sV -sC -Pn -p 22,80,443,8080,3306 10.0.0.1 10.0.0.20.0.0.2^[[201~
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-03-10 10:57 -03
+Nmap scan report for _gateway (10.0.0.1)
+Host is up (0.000051s latency).
+
+PORT     STATE    SERVICE    VERSION
+22/tcp   filtered ssh
+80/tcp   filtered http
+443/tcp  filtered https
+3306/tcp filtered mysql
+8080/tcp filtered http-proxy
+MAC Address: 02:0C:29:59:FF:8F (Unknown)
+
+Nmap scan report for 10.0.0.2
+Host is up (0.000088s latency).
+
+PORT     STATE    SERVICE    VERSION
+22/tcp   filtered ssh
+80/tcp   filtered http
+443/tcp  filtered https
+3306/tcp filtered mysql
+8080/tcp filtered http-proxy
+MAC Address: 02:0C:29:59:FF:8F (Unknown)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 2 IP addresses (2 hosts up) scanned in 6.76 seconds

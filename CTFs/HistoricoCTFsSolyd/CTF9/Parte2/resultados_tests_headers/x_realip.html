@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ambiente de Testes</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      line-height: 1.5;
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(0,0,0,.06), transparent),
+                  radial-gradient(900px 500px at 80% 90%, rgba(0,0,0,.06), transparent);
+      padding: 24px;
+    }
+    .card {
+      max-width: 720px;
+      width: 100%;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: 28px;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      .card { background: rgba(20,20,20,.72); border-color: rgba(255,255,255,.14); }
+    }
+    h1 { margin: 0 0 10px; font-size: 1.35rem; }
+    p { margin: 10px 0; }
+    .badge {
+      display: inline-block;
+      font-size: .85rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.14);
+      background: rgba(0,0,0,.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      .badge { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); }
+    }
+    .notice {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 4px solid #cc2d2d;
+      background: rgba(204,45,45,.08);
+      border-radius: 10px;
+    }
+    .footer {
+      margin-top: 18px;
+      font-size: .9rem;
+      opacity: .85;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .92em;
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-label="Aviso do servidor de projetos">
+    <span class="badge">Blogo</span>
+    <h1>Ambiente de Testes de Projetos</h1>
+
+    <div class="notice" role="alert">
+      <strong>Notificação:</strong> todos os projetos são testados neste servidor.
+      O uso deste ambiente é de <strong>exclusividade do setor de TI da Blogo</strong>.
+    </div>
+
+    <p>
+      Este servidor é destinado a validação interna, homologação e verificação de builds/artefatos
+      antes de qualquer publicação em ambientes produtivos.
+    </p>
+
+    <p class="footer">
+      Se você não faz parte do setor de TI da Blogo, encerre o acesso.
+    </p>
+  </main>
+</body>
+</html>

