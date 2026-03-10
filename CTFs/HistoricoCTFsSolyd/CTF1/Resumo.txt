@@ -706,3 +706,65 @@ Solyd{J4v4_T0P}
 
 
 
+CTF solyd 2019
+Desafio 4:
+Hacker Rock Story
+no iniciamos o ataque fazendo um reconechimento com o nmap que nos retornou o seguinte:
+nmap 44.199.236.83          
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-09 16:16 -0400
+Nmap scan report for ec2-44-199-236-83.compute-1.amazonaws.com (44.199.236.83)
+Host is up (0.14s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE    SERVICE
+22/tcp   open     ssh
+25/tcp   filtered smtp
+5000/tcp open     upnp
+
+Nmap done: 1 IP address (1 host up) scanned in 15.94 seconds
+
+sem saber o que e na porta 5000 usamos o Netcat para vê o se descobrimos algos:
+e o resultado foi:
+
+nc  44.199.236.83 5000          
+
+Bem vindo ao desafio! Esse desafio se trata de um trabalho universitario envolvendo processamento de imagens onde queremos mostrar novas formas de enviar QR Codes pela internet. Envie "Ok" Para comecar o desafio.
+
+
+
+com isso nós criamos um script em python que envia o ok pra nos e assim com toda a configuração de bytes e rbg nos recriamos a imagem e depos fazemos um decode dela
+e assim apaereceu a flag
+import socket, time
+from PIL import Image, ImageOps
+from pyzbar import pyzbar
+
+ip = "172.18.4.3"
+port = 5000
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, port))
+
+print(s.recv(1024).decode())
+s.send(b"ok")
+
+while 1:
+    time.sleep(0.5)
+
+    data = s.recv(100000).decode()
+    data = data.replace(" ", "").split(";")
+
+    qrcode = Image.new("RGB", (len(data), len(data)))
+    data.pop()
+
+    for i in range(len(data)):
+        data[i] = data[i].split(",(")
+        for j in range(len(data)):
+            data[i][j] = tuple(
+                map(int, data[i][j].replace("(", "").replace(")", "").split(","))
+            )
+            pixel = data[i][j]
+            qrcode.putpixel((i, j), pixel)
+
+    qrcode = ImageOps.expand(qrcode, border=3, fill="white")
+    s.send(pyzbar.decode(qrcode)[0][0])
+Solyd{4s_C0iS4s_L4m3nTam_}
+
