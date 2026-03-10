@@ -137,3 +137,6 @@ adalberto@ip-10-0-99-169:~$
 (observação essa senha e a mesma do usuario blogo no banco de dados
 foi necessario usar o python3 -c 'import pty; pty.spawn("/bin/bash")'
 para estabelecer a shell e se conectar no usuario)
+ apos conseguir a escalação de privelegio atraves da CVE sobre o below conseguimos a 4 flagroot@ip-10-0-55-149:~# cat flag.txt
+cat flag.txt
+Solyd{U$G0T$R007%Congrats!!!!}
