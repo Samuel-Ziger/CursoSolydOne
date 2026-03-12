@@ -3,7 +3,7 @@ import time
 from PIL import Image, ImageOps
 from pyzbar import pyzbar
 
-ip = "44.222.143.109"
+ip = "98.92.173.139"
 port = 5000
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -1,7 +1,0 @@
-lb-test
-root
-admin
-F3uH3Ad
-blogo
-hexstrike
-kali

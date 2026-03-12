@@ -1,4 +1,0 @@
-lb-test
-blogodb
-adalberto
-root
