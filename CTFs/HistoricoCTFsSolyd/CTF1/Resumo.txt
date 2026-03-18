@@ -993,3 +993,53 @@ Arquivo:
 Conteúdo:
 
 Solyd{f0ll0w_th3_r1ght_p4th}
+
+
+
+CTF 2019 solyd 
+desafio: vortex
+
+Um arquivo foi vazado da empresa vortex e ela quer que você faça um pentest em seus sistemas para ver o quanto aquele arquivo vazado pode comprometer a empresa.
+
+Download do arquivo
+
+1 flag:
+e um arquivo de rede usado no wirewhasrk a onde la dentreo vemos uma requisção http então vamos em export object selecionamos http e extraimos um zip aonde ele contem senha
+pra quebra esse senha usamos o john com 
+
+john hash_zip.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+ele extraiu uma foto srenchot.png e um arquivo flag.txt 
+depois so dar um cat no arquivo 
+cat flag.txt            
+Solyd{3xtract3d_from_pc4p}
+
+e temos nos primeira flag
+
+
+pra segunda flag olhamos imagem e nela vemos um texto então nos pegamos a imagem e jogamos no chat gpt pedindo pra ele trasncrever oq eu esta na imagem.
+e esse e o resultado:
+--> IBEGRK
+
+Rfgn bcrençãb dhr verzbf snmre veá raibvire gbqb b pbagvaragr fhy-nzrevpnab r aóf cerpvfnzbf qb ncbvb qr abffbf vairfgvqberf cnen gbeane vffb cbffíry.
+Znagre gbqbf rffrf qnqbf frthebf qr crffbnf gãb vzcbegnagrf é ernyzragr hz qrfnsvb cnen gbqbf rfgá pbagen aóf, ragãb cerpvfnzbf qb zákvzb qr erphefbf cbffírvf, Rfgnerv qr ivntrz abf crókvzbf geêf qvnf znf aãb cbqrzbf cnene, rfgnerv qrvknaqb b Eboregb rapneertnqb qr zbavgbene abffb fvgr radhnagb rfgnerv sben.B ybtva cnen dhnydhre shapvbaáevb é shapibegrk r n fraun é ibegrkqnqbffrthebf.
+Cbe snibe pbaqhmnz orz gbqn rffn bcrençãb dhr freá sngny cnen n rzcerfn. fr snyunezbf cbqrerzbf srpune abffnf cbegnf. Fhn synt rnflebgpvcure, yrzoerfr qr pbypne ab sbezngb.
+Qrirzbf svpne ngragbf n gbqbf, cryb zrabf gbqbf abffbf nedhvibf qr grkgb fãb pevcgbtensnqbf pbz hzn punir zhvgb frthen. ragãb rfgnzbf orz.
+
+
+--> VORTEX
+
+Esta operação que iremos fazer irá envoiver todo o continente sul-americano e nós precisamos do apoio de nossos investidores para tornar isso possíel.
+Manter todos esses dados seguros de pessoas tão importantes é realmente um desafio para todos está contra nós, então precisamos do máximo de recursos possíeis, Estarei de viagem nos peóximos três dias mas não podemos parar, estarei deixando o Roberto encarregado de monitorar nosso site enquanto estarei fora.O login para qualquer funcionário é funcvortex e a senha é vortexdadosseguros.
+Por favor conduzam bem toda essa operação que será fatal para a empresa. se falharmos poderemos fechar nossas portas. Sua flag easyrotcipher, lembrese de colcar no formato.
+Devemos ficar atentos a todos, pelo menos todos nossos arquivos de texto são criptografados com uma chave muito segura. então estamos bem.
+
+então ao descriptpgrafa conseguimos a flag easyrotcipher que e so colcoar no formato da plataforma Solyd{easyrotcipher}
+e conseguimos um usuario e senha.
+
+aos isso fazemos um nmap no ip e temos a porta 22 aberta mas os usuario não dao nela mas tem uma porta 8080 que ao conectar nela aparece uma painel de login.
+apos fazer o login ele parece uma tela pra gente fazer um host de um ip então se gente coloca qualquer ip nele. ele vai dar um ping e nos mostra o log
+mas tem uma vulnerabilidade nisso se ness mesmo local nos colocarmos | e algum comando ele executa
+então se a gente colocar | ls e excutar ele nos tras os dados e trouxe um arquivo chamado de .flag depois e so dar o comando | cat .flag e ele nos retorna com a nossa flag
+
+Array (     [0] => Solyd{c0mm4nd_1nj3ct10n_4tw} )
